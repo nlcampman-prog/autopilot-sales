@@ -1,0 +1,17 @@
+{
+  "name": "autopilot-sites",
+  "version": "1.0.0",
+  "description": "AutoPilot Sites — Automated content & affiliate site for AI/software tools",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "@astrojs/mdx": "^4.0.0",
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "^3.0.0"
+  }
+}

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+
+export async function getStaticPaths() {
+  const articles = Object.values(import.meta.glob('../../../content/articles/*.mdx', { eager: true }));
+  const categorySlugs = new Set<string>();
+  
+  articles.forEach((a: any) => {
+    const cat = a.frontmatter?.category;
+    if (cat) {
+      categorySlugs.add(cat.toLowerCase().replace(/\s+/g, '-'));
+    }
+  });
+
+  return Array.from(categorySlugs).map(slug => ({
+    params: { slug },
+    props: {},
+  }));
+}
+
+const { slug } = Astro.params;
+const articles = Object.values(import.meta.glob('../../../content/articles/*.mdx', { eager: true }));
+
+const matchingArticles = articles
+  .filter((a: any) => {
+    const cat = a.frontmatter?.category;
+    return cat && cat.toLowerCase().replace(/\s+/g, '-') === slug;
+  })
+  .sort((a: any, b: any) => 
+    new Date(b.frontmatter?.pubDate || 0).getTime() - new Date(a.frontmatter?.pubDate || 0).getTime()
+  );
+
+const categoryName = matchingArticles[0]?.frontmatter?.category || slug;
+---
+
+<BaseLayout
+  title={`${categoryName} — AI Tool Reviews`}
+  description={`Browse our collection of ${categoryName.toLowerCase()} AI tool reviews and comparisons. Find the best tools for your needs.`}
+>
+  <div class="container">
+    <div class="category-header">
+      <a href="/categories/" class="card-category" style="margin-bottom: 0.5rem; display: inline-block;">All Categories</a>
+      <h1>{categoryName}</h1>
+      <p>{matchingArticles.length} article{matchingArticles.length !== 1 ? 's' : ''}</p>
+    </div>
+
+    {matchingArticles.length > 0 ? (
+      <div class="card-grid">
+        {matchingArticles.map((article: any) => {
+          const { title, description, pubDate, category } = article.frontmatter;
+          const articleSlug = article.url?.split('/').pop()?.replace('.mdx', '') || '';
+          return (
+            <ArticleCard
+              title={title}
+              description={description}
+              url={`/articles/${articleSlug}/`}
+              category={category}
+              date={pubDate}
+            />
+          );
+        })}
+      </div>
+    ) : (
+      <p>No articles found in this category yet. Check back soon!</p>
+    )}
+  </div>
+</BaseLayout>

@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+
+// Helper: extract article metadata supporting multiple frontmatter formats
+function getArticleMeta(fm: any) {
+  return {
+    title: fm.title || '',
+    description: fm.metaDescription || fm.description || '',
+    date: fm.pubDate || fm.date || '',
+    category: fm.category || '',
+    featured: fm.featured || false,
+  };
+}
+
+// Load all articles from content collection
+const articles = Object.entries(import.meta.glob('../content/articles/*.mdx', { eager: true }))
+  .map(([path, module]: [string, any]) => ({
+    ...getArticleMeta(module.frontmatter),
+    slug: path.split('/').pop()?.replace('.mdx', '') || '',
+  }));
+const featuredArticles = articles.filter((a) => a.featured);
+const allArticles = articles.sort((a: any, b: any) => 
+  new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
+);
+---
+
+<BaseLayout
+  title="AutoPilot Sites"
+  description="Independent reviews and comparisons of the best AI tools, software, and SaaS products. Find the perfect tools for your workflow."
+  type="website"
+>
+  <section class="hero">
+    <div class="container-narrow">
+      <h1>Find the Best AI Tools for Your Workflow</h1>
+      <p>Honest, in-depth reviews and comparisons of the latest AI software and SaaS products. Hand-picked for maximum impact.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    {featuredArticles.length > 0 && (
+      <section>
+        <h2>Featured Reviews</h2>
+        <div class="card-grid">
+          {featuredArticles.map((article: any) => (
+            <ArticleCard
+              title={article.title}
+              description={article.description}
+              url={`/articles/${article.slug}/`}
+              category={article.category}
+              date={article.date}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section>
+      <h2>Latest Articles</h2>
+      <div class="card-grid">
+        {allArticles.map((article: any) => (
+          <ArticleCard
+            title={article.title}
+            description={article.description}
+            url={`/articles/${article.slug}/`}
+            category={article.category}
+            date={article.date}
+          />
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>

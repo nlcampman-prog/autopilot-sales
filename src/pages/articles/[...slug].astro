@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdPlaceholder from '../../components/AdPlaceholder.astro';
+
+export async function getStaticPaths() {
+  const articles = import.meta.glob('../../content/articles/*.mdx', { eager: true });
+  return Object.entries(articles).map(([path, module]: [string, any]) => {
+    const slug = path.split('/').pop()?.replace('.mdx', '') || '';
+    return {
+      params: { slug },
+      props: { article: module },
+    };
+  });
+}
+
+const { article } = Astro.props;
+const { Content, frontmatter } = article;
+const { title, description, pubDate, updatedDate, category, tags = [], metaDescription, date, featuredImage, slug } = frontmatter;
+// Map alternative frontmatter field names
+const articleDesc = metaDescription || description || '';
+const articleDate = pubDate || date || '';
+const articleUpdated = updatedDate || articleDate;
+const articleCat = category || '';
+---
+
+<BaseLayout
+  title={title}
+  description={articleDesc}
+  type="article"
+  publishedTime={articleDate}
+  tags={tags}
+>
+  <div class="container-narrow">
+    <article>
+      <header class="article-header">
+        {articleCat && <a href={`/categories/${articleCat.toLowerCase().replace(/\s+/g, '-')}/`} class="card-category">{articleCat}</a>}
+        <h1>{title}</h1>
+        <div class="article-meta">
+          <time datetime={articleDate}>
+            {new Date(articleDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
+          {articleUpdated && articleUpdated !== articleDate && (
+            <span>(Updated: {new Date(articleUpdated).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })})</span>
+          )}
+          {tags.length > 0 && (
+            <span>
+              {tags.map(tag => (
+                <a href={`/categories/${tag.toLowerCase().replace(/\s+/g, '-')}/`} style="font-size:0.85rem;margin-right:0.5rem;">#{tag}</a>
+              ))}
+            </span>
+          )}
+        </div>
+      </header>
+
+      <div class="article-content">
+        <Content />
+      </div>
+
+      <AdPlaceholder />
+
+      <div class="disclosure">
+        <strong>Affiliate Disclosure:</strong> Some of the links on this page are affiliate links. If you click through and make a purchase, we may earn a commission at no additional cost to you. We only recommend products and services we have personally tested and believe will provide value to our readers.
+      </div>
+    </article>
+  </div>
+</BaseLayout>

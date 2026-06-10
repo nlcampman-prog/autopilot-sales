@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// Extract all unique categories from content articles
+const articles = Object.values(import.meta.glob('../../content/articles/*.mdx', { eager: true }));
+const categoryMap = new Map<string, number>();
+
+articles.forEach((a: any) => {
+  const cat = a.frontmatter?.category;
+  if (cat) {
+    categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1);
+  }
+});
+
+const categories = Array.from(categoryMap.entries()).sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout
+  title="Categories"
+  description="Browse AI tools by category. Find reviews and comparisons for every type of software."
+>
+  <div class="container">
+    <div class="category-header">
+      <h1>Browse by Category</h1>
+      <p>Find the right AI tools for your needs. Select a category to see all related reviews and comparisons.</p>
+    </div>
+
+    <div class="card-grid">
+      {categories.map(([name, count]) => {
+        const slug = name.toLowerCase().replace(/\s+/g, '-');
+        return (
+          <a href={`/categories/${slug}/`} class="card" style="text-decoration: none; color: inherit;">
+            <span class="card-category">{name}</span>
+            <h2 class="card-title" style="margin-top: 0.5rem;">{name}</h2>
+            <p class="card-meta">{count} article{count !== 1 ? 's' : ''}</p>
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>
