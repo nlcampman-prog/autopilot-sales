@@ -22,7 +22,7 @@ export async function GET(context) {
   return rss({
     title: 'AutoPilot Sites — AI Tools Reviews & Comparisons',
     description: 'Independent reviews and comparisons of the best AI tools, software, and SaaS products.',
-    site: context.site || 'https://autopilotsites.ai',
+    site: context.site || 'https://autopilotsales.org',
     items,
     trailingSlash: true,
   });
