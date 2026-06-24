@@ -11,25 +11,12 @@ export default defineConfig({
     mdx(),
     sitemap({
       filter: (page) => !page.includes('/404'),
-      changefreq: 'weekly',
+      changefreq: 'daily',
       priority: 0.7,
       lastmod: new Date(),
     }),
   ],
   markdown: {
-    shikiConfig: {
-      theme: 'github-light',
-    },
-    remarkPlugins: [],
-    rehypePlugins: [],
-  },
-  vite: {
-    build: {
-      rollupOptions: {
-        output: {
-          manualChunks: undefined,
-        },
-      },
-    },
+    shikiConfig: { theme: 'github-light' },
   },
 });
