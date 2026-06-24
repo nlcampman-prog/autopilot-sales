@@ -225,6 +225,21 @@ section > h2 { margin-bottom: 0.5rem; }
 
 .site-nav a:hover, .site-nav a.active { color: var(--color-primary); text-decoration: none; }
 
+/* Buy button in nav */
+.buy-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: white !important;
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+.buy-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+  color: white !important;
+  transform: scale(1.05);
+}
+
 /* Footer */
 .site-footer {
   background: var(--color-surface);
