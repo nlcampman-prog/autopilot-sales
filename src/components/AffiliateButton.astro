@@ -1,13 +1,13 @@
 ---
 export interface Props {
-  href: string;
+  href?: string;
+  url?: string;
   label: string;
   small?: boolean;
 }
-
-const { href, label, small = false } = Astro.props;
+const { href, url, label, small = false } = Astro.props;
+const link = href || url || '#';
 ---
-
-<a href={href} class={`aff-btn ${small ? 'aff-btn-sm' : ''}`} rel="sponsored noopener noreferrer" target="_blank">
+<a href={link} class={`aff-btn ${small ? 'aff-btn-sm' : ''}`} rel="sponsored noopener noreferrer" target="_blank">
   {label} →
 </a>
